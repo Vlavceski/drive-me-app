@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/inputFrom"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/input_add_post_bg"
+        android:hint="From"
+        android:inputType="text"
+        android:padding="7dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.415"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/inputTo"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@drawable/input_add_post_bg"
+        android:hint="to"
+        android:inputType="text"
+        android:padding="7dp"
+        app:layout_constraintEnd_toEndOf="@+id/inputFrom"
+        app:layout_constraintStart_toStartOf="@+id/inputFrom"
+        app:layout_constraintTop_toBottomOf="@+id/inputFrom" />
+
+
+    <EditText
+        android:id="@+id/inputDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="92dp"
+        android:background="@drawable/input_add_post_bg"
+        android:hint="Description"
+        android:paddingLeft="10dp"
+        android:paddingTop="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        app:layout_constraintEnd_toEndOf="@+id/inputTo"
+        app:layout_constraintHorizontal_bias="0.42"
+        app:layout_constraintStart_toStartOf="@+id/inputTo"
+        app:layout_constraintTop_toBottomOf="@+id/inputTo" />
+
+    <Button
+        android:id="@+id/datepicker"
+        android:layout_width="133dp"
+        android:layout_height="37dp"
+        android:layout_marginTop="12dp"
+        android:text="Choose date"
+        app:layout_constraintEnd_toEndOf="@+id/inputTo"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/inputTo"
+        app:layout_constraintTop_toBottomOf="@+id/inputTo" />
+
+    <TextView
+        android:id="@+id/datePicker_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/datepicker"
+        app:layout_constraintStart_toStartOf="@+id/datepicker"
+        app:layout_constraintTop_toBottomOf="@+id/datepicker" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
