@@ -9,6 +9,7 @@ class Posts(
     var postFrom: String? = null,
     var postTo: String? = null,
     var postDate: String? = null,
-    var postDesc: String? = null
-
+    var postDesc: String? = null,
+    var uid_user:Any?=null,
+    var allowed:Boolean?=false
     )

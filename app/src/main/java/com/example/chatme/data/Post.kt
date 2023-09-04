@@ -8,5 +8,7 @@ data class Post(
     val postTo: String,
     val postDate: String,
     val postDesc: String,
-    val uid_user:String
-)
+    val uid_user:String,
+    val bookmarked: Boolean?,
+    val allowed: Boolean?,
+    )

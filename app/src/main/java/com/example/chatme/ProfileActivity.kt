@@ -1,5 +1,6 @@
 package com.example.chatme
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.google.firebase.auth.FirebaseAuth
@@ -10,6 +11,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.activity_profile.btn_back_2
 import kotlinx.android.synthetic.main.activity_profile.circleImageView
 import kotlinx.android.synthetic.main.activity_profile.inputCity_profile_
 import kotlinx.android.synthetic.main.activity_profile.inputCountry_profile
@@ -48,6 +50,10 @@ class ProfileActivity : AppCompatActivity() {
             }
 
         })
+        btn_back_2.setOnClickListener {
+                val intent = Intent(this@ProfileActivity, MainActivity::class.java)
+                startActivity(intent)
+        }
 
     }
 }

@@ -12,6 +12,5 @@ class PostsHolder(val customView: View, var category: Posts? = null) :
 //    val descriptionTextView: TextView = itemView.findViewById(R.id.descriptionTextView)
 
     fun bind(category: Posts) {
-
     }
 }

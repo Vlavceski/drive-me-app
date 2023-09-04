@@ -1,33 +1,34 @@
 {
   "project_info": {
-    "project_number": "1019168361034",
-    "project_id": "post-chat-app-v3",
-    "storage_bucket": "post-chat-app-v3.appspot.com"
+    "project_number": "445407907543",
+    "firebase_url": "https://post-chat-app-v4-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "post-chat-app-v4",
+    "storage_bucket": "post-chat-app-v4.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1019168361034:android:4c9d4a6e40d05ac67bb4b3",
+        "mobilesdk_app_id": "1:445407907543:android:c42f1292b0d858b898ea92",
         "android_client_info": {
           "package_name": "com.example.chatme"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1019168361034-fmh4s6n4nrekeovgjjjb7lgq0bbr5ehq.apps.googleusercontent.com",
+          "client_id": "445407907543-6u9o30cun3jcubi105s5e5gcaio80lu4.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDnvmJYUljwT_67E1IttHi-fGhE-lLMsDs"
+          "current_key": "AIzaSyCjjKpWOiufmwVzZ0-YUTSbmd1Hpk0B3Go"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1019168361034-fmh4s6n4nrekeovgjjjb7lgq0bbr5ehq.apps.googleusercontent.com",
+              "client_id": "445407907543-6u9o30cun3jcubi105s5e5gcaio80lu4.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

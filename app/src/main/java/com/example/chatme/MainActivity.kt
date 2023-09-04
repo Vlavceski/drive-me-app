@@ -5,27 +5,27 @@ import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.ProgressDialog
 import android.content.Intent
-import android.graphics.Color
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.text.format.DateUtils
 import android.util.Log
 import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.MenuItem
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.DatePicker
-import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.chatme.Utils.Posts
-import com.example.chatme.data.Bookmark
 import com.example.chatme.data.Post
 import com.example.chatme.holder.PostsHolder
 import com.firebase.ui.database.FirebaseRecyclerAdapter
@@ -48,6 +48,7 @@ import kotlinx.android.synthetic.main.activity_main.drawerLayout
 import kotlinx.android.synthetic.main.activity_main.navView
 import kotlinx.android.synthetic.main.activity_main.recyclerview
 import kotlinx.android.synthetic.main.activity_setup.app_bar
+import kotlinx.android.synthetic.main.dialog_post.datePicker_text
 import kotlinx.android.synthetic.main.single_view_post2.view.bookmark
 import kotlinx.android.synthetic.main.single_view_post2.view.date
 import kotlinx.android.synthetic.main.single_view_post2.view.from
@@ -61,7 +62,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.TimeZone
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,DatePickerDialog.OnDateSetListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
+    DatePickerDialog.OnDateSetListener {
     private lateinit var mAuth: FirebaseAuth;
     private lateinit var mUser: FirebaseUser;
     private lateinit var mUserRef: DatabaseReference;
@@ -73,8 +75,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var postImageRef: StorageReference;
     private lateinit var username_profile: String
     private lateinit var image_username_profile: String
-    private lateinit var datePost_: String
-
+    private var datePost_: String = ""
+    private lateinit var dialogView: View
 
     private lateinit var imageUri: Uri
     private val PICK_IMAGE_REQUEST = 1
@@ -113,6 +115,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     username_profile = snapshot.child("username").value.toString();
                 }
             }
+
             override fun onCancelled(error: DatabaseError) {
             }
         })
@@ -124,13 +127,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun showDialog() {
         dialog.setOnClickListener {
             val builder = AlertDialog.Builder(this)
-            val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_post, null)
+            dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_post, null)
 
             val textDate = dialogView.findViewById<TextView>(R.id.datePicker_text)
+            textDate.text = "-/-/-";
+
 
             builder.setView(dialogView)
                 .setTitle("AddPost")
                 .setPositiveButton("OK") { _, _ ->
+
 
                     val inputFrom_ = dialogView.findViewById<TextView>(R.id.inputFrom)
                     val inputTo_ = dialogView.findViewById<TextView>(R.id.inputTo)
@@ -141,35 +147,34 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     val postTo = inputTo_.text.toString()
                     val progressBar = ProgressDialog(this@MainActivity)
 
-
-                    val inputFrom_dialog = dialogView.findViewById<TextView>(R.id.inputFrom)
-                    val inputTo_dialog = dialogView.findViewById<TextView>(R.id.inputTo)
-                    val inputDesc_dialog = dialogView.findViewById<TextView>(R.id.inputDesc)
-
-
-                    val funMessages = arrayOf(
-                        "Hang on, let me get my popcorn!",
-                        "This is going to be good!",
-                        "Let's see what you've got!",
-                        "Time to entertain us!",
-                        "Bring on the fun!"
+                    val Messages = arrayOf(
+                        "Successful. Wait approval from admin to show post.",
                     )
 
                     if (postFrom == postTo) {
-                        inputFrom_dialog.error = "Please write different position!"
-                        inputTo_dialog.error = "Please write different position!"
-                    }
-                    if (postFrom.isEmpty()) {
-                        inputFrom_dialog.error = "Please write something!"
-                    }
-                    if (postTo.isEmpty()) {
-                        inputTo_dialog.error = "Please write something!"
-                    }
-                    if (::datePost_.isInitialized) {
-                        textDate.error = "Please choose date!!"
-                    }
-                    if (postDesc.isEmpty()) {
-                        inputDesc_dialog.error = "Please write something!"
+                        Toast.makeText(
+                            this@MainActivity,
+                            "Destinations is same!",
+                            Toast.LENGTH_LONG
+                        ).show()
+
+                    } else if (postFrom.isEmpty()) {
+                        Toast.makeText(
+                            this@MainActivity,
+                            "Failed. Input FROM is empty",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    } else if (postTo.isEmpty()) {
+                        Toast.makeText(
+                            this@MainActivity,
+                            "Failed. Input TO is empty",
+                            Toast.LENGTH_LONG
+                        ).show()
+
+                    } else if (::datePost_.equals("")) {
+                        Toast.makeText(this@MainActivity, "Please choose date!!", Toast.LENGTH_LONG)
+                            .show()
+
                     } else {
                         progressBar.setCancelable(false)
                         progressBar.setMessage("Adding Post")
@@ -178,7 +183,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         progressBar.show()
 
                         // Add a fun message before the post is added
-                        val randomMessage = funMessages.random()
+                        val randomMessage = Messages.random()
                         Toast.makeText(this@MainActivity, randomMessage, Toast.LENGTH_SHORT).show()
 
                         val currentDate = Date()
@@ -196,13 +201,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                 postTo = postTo,
                                 postDate = datePost_,
                                 postDesc = postDesc,
-                                uid_user=mUser.uid
+                                uid_user = mUser.uid,
+                                bookmarked = false,
+                                allowed = false
                             )
 
-                            mPostRef.child(mUser.uid + formattedDate).setValue(post).addOnSuccessListener {
-                                progressBar.dismiss()
+                            mPostRef.child(mUser.uid + formattedDate).setValue(post)
+                                .addOnSuccessListener {
+                                    progressBar.dismiss()
 
-                            }
+                                }
                         }
                     }
                 }
@@ -215,21 +223,24 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val currentDate = Date()
                 val dateFormat = SimpleDateFormat("dd-M-yyyy")
                 val formattedDate = dateFormat.format(currentDate)
-                val splitDate = formattedDate.split("-")  // Split the formattedDate string into parts
+                val splitDate =
+                    formattedDate.split("-")  // Split the formattedDate string into parts
                 val day = splitDate[0].toInt()
-                val month=splitDate[1].toInt()
+                val month = splitDate[1].toInt()
                 val year = splitDate[2].toInt()
-                DatePickerDialog(this,this,year,month,day).show()
-//                textDate.setText(datePost_)
-            }
+                DatePickerDialog(this, this, year, month, day).show()
 
+            }
         }
     }
 
 
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
-        datePost_=dayOfMonth.toString().plus("-").plus(month.toString()).plus("-").plus(year.toString())
+        datePost_ =
+            dayOfMonth.toString().plus("-").plus(month.toString()).plus("-").plus(year.toString())
+        val textDate = dialogView.findViewById<TextView>(R.id.datePicker_text)
 
+        textDate.text = datePost_
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -258,75 +269,138 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 position: Int,
                 model: Posts
             ) {
-                val postKey = getRef(position).key;
-                val timeAg = calculateTimeAgo(model.dataPost)
-                holder.customView.timeAgo.text = timeAg
-                holder.customView.from.text = model.postFrom
-                holder.customView.to.text = model.postTo
-                holder.customView.postDesc.text = model.postDesc
-                holder.customView.date.text = model.postDate
-                Picasso.get().load(model.userProfileImageUrl)
-                    .into(holder.customView.profileImagePost)
-                holder.customView.profileUsernamePost.text = model.username
-                mBookMarkRef.child(mUser.uid).child(postKey!!).addListenerForSingleValueEvent(object :ValueEventListener{
 
-                    @SuppressLint("NotifyDataSetChanged")
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        if (!snapshot.exists()) {
-                            holder.customView.bookmark.setImageDrawable(ContextCompat.getDrawable(this@MainActivity, R.drawable.baseline_bookmark_border_24))
-                            notifyDataSetChanged();
-                        } else {
-                          holder.customView.bookmark.setImageDrawable(ContextCompat.getDrawable(this@MainActivity, R.drawable.baseline_bookmark_added_24))
-                            notifyDataSetChanged();
-                        }
-                    }
+                if (model.allowed == true) {
+                    val postKey = getRef(position).key;
+                    val timeAg = calculateTimeAgo(model.dataPost)
+                    holder.customView.timeAgo.text = timeAg
+                    holder.customView.from.text = model.postFrom
+                    holder.customView.to.text = model.postTo
+                    holder.customView.postDesc.text = model.postDesc
+                    holder.customView.date.text = model.postDate
+                    Picasso.get().load(model.userProfileImageUrl)
+                        .into(holder.customView.profileImagePost)
+                    holder.customView.profileUsernamePost.text = model.username
+//                val reference = mPostRef.child(postKey!!)
+                    var value: Any?
+                    val reference = mBookMarkRef.child(mUser.uid).child(postKey!!)
 
-                    override fun onCancelled(error: DatabaseError) {
-                        d("Error -- > bookMark",error.toString())
-                    }
 
-                })
-                holder.customView.bookmark.setOnClickListener {
-                    mBookMarkRef.child(mUser.uid).child(postKey!!).addListenerForSingleValueEvent(object :ValueEventListener{
 
-                        @SuppressLint("NotifyDataSetChanged")
-                        override fun onDataChange(snapshot: DataSnapshot) {
-                            d("data snapshot", snapshot.toString())
-                            if (snapshot.exists()) {
-                                mBookMarkRef.child(mUser.uid).child(postKey).removeValue();
-                                holder.customView.bookmark.setImageDrawable(ContextCompat.getDrawable(this@MainActivity, R.drawable.baseline_bookmark_border_24))
-                                notifyDataSetChanged();
-                            } else {
-                                val bookmark_=Bookmark(
-                                    status = "bookmarked",
-                                    bookmark_key=postKey,
-                                    uid_user=mUser.uid
+                    reference.addValueEventListener(object : ValueEventListener {
+                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                            value =
+                                dataSnapshot.child("bookmarked").getValue(Boolean::class.java)
+                                    ?: false
+
+                            if (value == true) {
+                                holder.customView.bookmark.setImageDrawable(
+                                    ContextCompat.getDrawable(
+                                        this@MainActivity,
+                                        R.drawable.baseline_bookmark_added_24
+                                    )
                                 )
-                                mBookMarkRef.child(mUser.uid).child(postKey).setValue(bookmark_);
-                                holder.customView.bookmark.setImageDrawable(ContextCompat.getDrawable(this@MainActivity, R.drawable.baseline_bookmark_added_24))
-                                notifyDataSetChanged();
+                            } else {
+                                holder.customView.bookmark.setImageDrawable(
+                                    ContextCompat.getDrawable(
+                                        this@MainActivity,
+                                        R.drawable.baseline_bookmark_border_24
+                                    )
+                                )
                             }
                         }
 
-                        override fun onCancelled(error: DatabaseError) {
-                           d("Error -- > bookMark",error.toString())
-                        }
+                        override fun onCancelled(databaseError: DatabaseError) {
 
+                        }
                     })
+                    holder.customView.profileImagePost.setOnClickListener {
+                        if (mUser.uid.equals(model.uid_user)) {
+                            val intent = Intent(this@MainActivity, ProfileActivity::class.java)
+                            startActivity(intent)
+                        } else {
+                            val intent = Intent(this@MainActivity, ViewFriendActivity::class.java)
+                            intent.putExtra("userKey", model.uid_user.toString())
+                            startActivity(intent)
+                        }
+                    }
+                    holder.customView.profileUsernamePost.setOnClickListener {
+                        if (mUser.uid.equals(model.uid_user)) {
+                            val intent = Intent(this@MainActivity, ProfileActivity::class.java)
+                            startActivity(intent)
+                        } else {
+                            val intent = Intent(this@MainActivity, ViewFriendActivity::class.java)
+                            intent.putExtra("userKey", model.uid_user.toString())
+                            startActivity(intent)
+                        }
+                    }
+                    holder.customView.bookmark.setOnClickListener {
+//                    val reference1 = mPostRef.child(postKey!!).child("bookmarked")
+                        val reference1 =
+                            mBookMarkRef.child(mUser.uid).child(postKey).child("bookmarked")
+                        var value1: Boolean
+                        reference1.addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                value1 = dataSnapshot.getValue(Boolean::class.java) ?: false
+                                if (value1) {
+                                    mBookMarkRef.child(mUser.uid).child(postKey).removeValue()
+//                                reference1.setValue(false)
+                                    holder.customView.bookmark.setImageDrawable(
+                                        ContextCompat.getDrawable(
+                                            this@MainActivity,
+                                            R.drawable.baseline_bookmark_added_24
+                                        )
+                                    )
+                                    notifyDataSetChanged();
+
+                                }
+                                if (!value1) {
+                                    val post = Post(
+                                        username = username_profile,
+                                        userProfileImageUrl = image_username_profile,
+                                        dataPost = model.dataPost.toString(),
+                                        postFrom = model.postFrom.toString(),
+                                        postTo = model.postTo.toString(),
+                                        postDate = model.postDate.toString(),
+                                        postDesc = model.postDesc.toString(),
+                                        uid_user = mUser.uid,
+                                        bookmarked = true,
+                                        allowed = true
+                                    )
+                                    mBookMarkRef.child(mUser.uid).child(postKey).setValue(post)
+//                                reference1.setValue(true)
+                                    holder.customView.bookmark.setImageDrawable(
+                                        ContextCompat.getDrawable(
+                                            this@MainActivity,
+                                            R.drawable.baseline_bookmark_border_24
+                                        )
+                                    )
+                                    notifyDataSetChanged();
+                                }
+                            }
+
+                            override fun onCancelled(databaseError: DatabaseError) {
+                                // An error occurred while retrieving the data
+                                // Handle the error here
+                            }
+                        })
+                    }
+
+                } else {
+                    holder.itemView.visibility = View.GONE
+                    val params = holder.itemView.layoutParams as RecyclerView.LayoutParams
+                    params.height = 0
+                    params.width = 0
+                    holder.itemView.layoutParams = params
                 }
 
-
-
             }
-
         }
         adapter.notifyDataSetChanged()
-        adapter.startListening()
+
         recyclerview.adapter = adapter
+        adapter.startListening()
     }
-
-
-
 
 
     @SuppressLint("SimpleDateFormat")
@@ -420,10 +494,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val intent = Intent(this@MainActivity, FindFriendActivity::class.java)
                 startActivity(intent)
             }
-            R.id.bookmark-> {
+
+            R.id.requests -> {
+                val intent = Intent(this@MainActivity, RequestsActivity::class.java)
+                startActivity(intent)
+            }
+
+            R.id.bookmark -> {
                 val intent = Intent(this@MainActivity, BookmarkActivity::class.java)
                 startActivity(intent)
             }
+
             R.id.logout -> {
                 mAuth.signOut()
                 val intent = Intent(this@MainActivity, LoginActivity::class.java)

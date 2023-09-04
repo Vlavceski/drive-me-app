@@ -46,7 +46,7 @@ class RegisterActivity : AppCompatActivity() {
                     finish()
                 }
                 else{
-                    Toast.makeText(this,"Failed", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this,"Email exists", Toast.LENGTH_LONG).show()
                 }
             }
 

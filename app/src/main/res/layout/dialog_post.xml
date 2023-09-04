@@ -5,20 +5,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp">
+    android:padding="16dp"
+
+    >
 
     <EditText
         android:id="@+id/inputFrom"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/input_add_post_bg"
         android:hint="From"
         android:inputType="text"
         android:padding="7dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.415"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -71,6 +73,39 @@
         app:layout_constraintEnd_toEndOf="@+id/datepicker"
         app:layout_constraintStart_toStartOf="@+id/datepicker"
         app:layout_constraintTop_toBottomOf="@+id/datepicker" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="FROM"
+        app:layout_constraintBottom_toBottomOf="@+id/inputFrom"
+        app:layout_constraintEnd_toStartOf="@+id/inputFrom"
+        app:layout_constraintTop_toTopOf="@+id/inputFrom"
+        app:layout_constraintVertical_bias="0.473" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="TO"
+        app:layout_constraintBottom_toBottomOf="@+id/inputTo"
+        app:layout_constraintEnd_toStartOf="@+id/inputTo"
+        app:layout_constraintTop_toTopOf="@+id/inputTo"
+        app:layout_constraintVertical_bias="0.473" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Description"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/inputDesc"
+        app:layout_constraintEnd_toEndOf="@+id/inputDesc"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/inputDesc" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

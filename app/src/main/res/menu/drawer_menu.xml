@@ -8,16 +8,19 @@
             android:title="Profile"
             android:icon="@drawable/ic_profile"/>
         <item android:id="@+id/friend"
-            android:title="Friend"
+            android:title="Friends"
             android:icon="@drawable/ic_friend"/>
         <item android:id="@+id/findFriend"
             android:title="Find Friend"
             android:icon="@drawable/ic_find_friend"/>
+        <item android:id="@+id/requests"
+            android:title="Requests"
+            android:icon="@drawable/requests"/>
         <item android:id="@+id/chat"
-            android:title="Chat"
+            android:title="Chats"
             android:icon="@drawable/ic_chat"/>
         <item android:id="@+id/bookmark"
-            android:title="Bookmark"
+            android:title="Bookmarks"
             android:icon="@drawable/baseline_bookmark_add_24"/>
 
 

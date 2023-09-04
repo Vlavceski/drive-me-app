@@ -3,6 +3,7 @@ package com.example.chatme
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -79,6 +80,7 @@ class FindFriendActivity : AppCompatActivity() {
                     holder.itemView.layoutParams = ViewGroup.LayoutParams(0, 0)
                 }
                 holder.itemView.setOnClickListener {
+                    d("getReg find Friend",getRef(position).key.toString())
                     val intent= Intent(this@FindFriendActivity,ViewFriendActivity::class.java)
                     intent.putExtra("userKey",getRef(position).key.toString())
                     startActivity(intent)

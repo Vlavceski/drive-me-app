@@ -3,6 +3,7 @@ package com.example.chatme
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
@@ -17,6 +18,8 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_find_friend.app_bar
+import kotlinx.android.synthetic.main.activity_friend.back_toHome
+import kotlinx.android.synthetic.main.activity_friend.isEmpty
 import kotlinx.android.synthetic.main.activity_friend.recyclerView_Friends
 import kotlinx.android.synthetic.main.single_view_friend.view.circleImageView2_my_friend
 import kotlinx.android.synthetic.main.single_view_friend.view.city_my_friend
@@ -31,7 +34,7 @@ class FriendActivity : AppCompatActivity() {
         setContentView(R.layout.activity_friend)
         setSupportActionBar(app_bar as Toolbar?)
         supportActionBar?.title = "Friends";
-        supportActionBar?.setDisplayHomeAsUpEnabled(true);
+//        supportActionBar?.setDisplayHomeAsUpEnabled(true);
         mAuth=FirebaseAuth.getInstance();
         mUser= mAuth.currentUser!!;
         mRef= FirebaseDatabase.getInstance().reference.child("Friends");
@@ -39,6 +42,10 @@ class FriendActivity : AppCompatActivity() {
         recyclerView_Friends.layoutManager= LinearLayoutManager(this@FriendActivity);
         LoadFriends("")
 
+        back_toHome.setOnClickListener{
+            val intent= Intent(this@FriendActivity,MainActivity::class.java)
+            startActivity(intent);
+        }
     }
 
     private fun LoadFriends(s: String) {
@@ -70,6 +77,17 @@ class FriendActivity : AppCompatActivity() {
                     val intent= Intent(this@FriendActivity,ChatActivity::class.java)
                     intent.putExtra("OtherUserID",getRef(position).key.toString())
                     startActivity(intent);
+                }
+            }
+            override fun onDataChanged() {
+                super.onDataChanged()
+
+                // Check if the adapter has no items after loading data
+                if (itemCount == 0) {
+                    isEmpty.text="Empty"
+                }
+                else{
+                    isEmpty.text=""
                 }
             }
 
